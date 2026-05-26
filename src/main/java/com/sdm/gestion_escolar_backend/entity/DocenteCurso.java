@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 public class DocenteCurso {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id_docente_curso;
+    private Integer idDocenteCurso;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_docente")

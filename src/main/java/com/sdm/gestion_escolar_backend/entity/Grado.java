@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 public class Grado {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id_grado;
+    private Integer idGrado;
 
     @Column(nullable = false, length = 100)
     private String nombre;

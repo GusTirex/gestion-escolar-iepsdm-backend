@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 public class Nota {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id_nota;
+    private Integer idNota;
 
     @Column(nullable = false)
     private Double nota;

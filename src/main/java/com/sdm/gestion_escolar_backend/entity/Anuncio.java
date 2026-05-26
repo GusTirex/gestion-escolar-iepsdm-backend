@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 public class Anuncio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id_anuncio;
+    private Integer idAnuncio;
 
     @Column(nullable = false, length = 100)
     private String titulo;

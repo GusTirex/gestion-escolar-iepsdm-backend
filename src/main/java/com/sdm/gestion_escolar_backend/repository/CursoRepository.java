@@ -7,5 +7,5 @@ import com.sdm.gestion_escolar_backend.entity.Curso;
 
 @Repository
 public interface CursoRepository extends JpaRepository<Curso, Integer> {
-    
+    boolean existsByNombre(String nombre);
 }

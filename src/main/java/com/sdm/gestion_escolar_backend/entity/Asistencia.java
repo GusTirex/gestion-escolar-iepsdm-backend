@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 public class Asistencia {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id_asistencia;
+    private Integer idAsistencia;
 
     @Column(nullable = false)
     private LocalDate fecha;

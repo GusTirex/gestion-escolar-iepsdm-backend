@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 public class Padre {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id_padre;
+    private Integer idPadre;
 
     @Column(nullable = false, length = 100)
     private String nombres;
@@ -34,7 +34,7 @@ public class Padre {
     private String apellidos;
 
     @Column(nullable = false)
-    private LocalDate fecha_nacimiento;
+    private LocalDate fechaNacimiento;
 
     @Column(length = 255)
     private String direccion;
