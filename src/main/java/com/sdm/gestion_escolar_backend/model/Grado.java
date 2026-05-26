@@ -28,9 +28,6 @@ public class Grado {
     @Column(nullable = false, length = 100)
     private String nombre;
 
-    @Column(nullable = false)
-    private Integer id_nivel;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_nivel")
     private Nivel nivel;

@@ -33,7 +33,7 @@ public class Docente {
     @Column(nullable = false, length = 100)
     private String apellidos;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
     private LocalDate fecha_nacimiento;
 
     @Column(length = 255)
@@ -44,9 +44,6 @@ public class Docente {
 
     @Column(length = 20)
     private String telefono;
-
-    @Column(nullable = false)
-    private Integer id_usuario;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario")

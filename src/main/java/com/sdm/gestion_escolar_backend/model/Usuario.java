@@ -38,9 +38,6 @@ public class Usuario {
     @Column(nullable = false)
     private Boolean estado = true;
 
-    @Column(nullable = false)
-    private Integer id_rol;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_rol")
     private Rol rol;

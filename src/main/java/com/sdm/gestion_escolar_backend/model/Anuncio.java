@@ -27,9 +27,6 @@ public class Anuncio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id_anuncio;
 
-    @Column(nullable = false)
-    private Integer id_usuario;
-
     @Column(nullable = false, length = 100)
     private String titulo;
 

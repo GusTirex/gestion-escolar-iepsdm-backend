@@ -26,12 +26,6 @@ public class Nota {
     private Integer id_nota;
 
     @Column(nullable = false)
-    private Integer id_evaluacion;
-
-    @Column(nullable = false)
-    private Integer id_estudiante;
-
-    @Column(nullable = false)
     private Double nota;
 
     @Column(length = 255)

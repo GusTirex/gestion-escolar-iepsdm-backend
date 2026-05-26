@@ -1,7 +1,6 @@
 package com.sdm.gestion_escolar_backend.model;
 
 import java.time.LocalDate;
-import java.time.Year;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,13 +28,7 @@ public class Matricula {
     private Integer id_matricula;
 
     @Column(nullable = false)
-    private Integer id_estudiante;
-
-    @Column(nullable = false)
-    private Integer id_seccion;
-
-    @Column(nullable = false)
-    private Year anio;
+    private Integer anio;
     
     @Column(nullable = false, columnDefinition = "DATE")
     private LocalDate fecha;

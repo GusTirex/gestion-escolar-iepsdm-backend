@@ -28,9 +28,6 @@ public class Asistencia {
     private Integer id_asistencia;
 
     @Column(nullable = false)
-    private Integer id_estudiante;
-
-    @Column(nullable = false)
     private LocalDate fecha;
 
     @Builder.Default

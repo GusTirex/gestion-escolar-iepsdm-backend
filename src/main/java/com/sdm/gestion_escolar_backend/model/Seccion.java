@@ -28,9 +28,6 @@ public class Seccion {
     @Column(nullable = false, length = 100)
     private String nombre;
 
-    @Column(nullable = false)
-    private Integer id_grado;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_grado")
     private Grado grado;

@@ -1,6 +1,5 @@
 package com.sdm.gestion_escolar_backend.model;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -32,9 +31,6 @@ public class DocenteCurso {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_curso")
     private Curso curso;
-
-    @Column(nullable = false)
-    private Integer id_seccion;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_seccion")

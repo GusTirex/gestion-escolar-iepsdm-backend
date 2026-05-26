@@ -36,9 +36,6 @@ public class Evaluacion {
     @Column(nullable = false, columnDefinition = "DATE")
     private LocalDate fecha;
 
-    @Column(nullable = false)
-    private Integer id_curso;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_curso")
     private Curso curso;
