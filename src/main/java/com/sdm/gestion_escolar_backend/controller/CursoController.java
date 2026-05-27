@@ -3,7 +3,6 @@ package com.sdm.gestion_escolar_backend.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -60,46 +59,33 @@ public class CursoController {
 
     @PostMapping
     public ResponseEntity<CursoResponseDTO> crearCurso(@Valid @RequestBody CrearCursoDTO crearCursoDTO) {
-        try {
-            Curso curso = Curso.builder()
-                .nombre(crearCursoDTO.getNombre())
-                .descripcion(crearCursoDTO.getDescripcion())
-                .build();
-            
-            Curso cursoCreado = cursoService.crear(curso);
-            return ResponseEntity.status(HttpStatus.CREATED).body(convertirADTO(cursoCreado));
-            
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
+        Curso curso = Curso.builder()
+            .nombre(crearCursoDTO.getNombre())
+            .descripcion(crearCursoDTO.getDescripcion())
+            .build();
+
+        Curso cursoCreado = cursoService.crear(curso);
+        return ResponseEntity.status(201).body(convertirADTO(cursoCreado));
     }
 
     @PutMapping("/{idCurso}")
     public ResponseEntity<CursoResponseDTO> actualizarCurso(
             @Parameter(description = "ID del curso a actualizar", required = true) @PathVariable Integer idCurso, 
             @Valid @RequestBody CrearCursoDTO cursoDTO) {
-        try {
-            Curso cursoActualizado = Curso.builder()
-                .nombre(cursoDTO.getNombre())
-                .descripcion(cursoDTO.getDescripcion())
-                .build();
-            
-            Curso curso = cursoService.actualizar(idCurso, cursoActualizado);
-            return ResponseEntity.ok(convertirADTO(curso));
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        Curso cursoActualizado = Curso.builder()
+            .nombre(cursoDTO.getNombre())
+            .descripcion(cursoDTO.getDescripcion())
+            .build();
+
+        Curso curso = cursoService.actualizar(idCurso, cursoActualizado);
+        return ResponseEntity.ok(convertirADTO(curso));
     }
 
     @DeleteMapping("/{idCurso}")
     public ResponseEntity<Void> eliminarCurso(
             @Parameter(description = "ID del curso a eliminar", required = true) @PathVariable Integer idCurso) {
-        try {
-            cursoService.eliminar(idCurso);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        cursoService.eliminar(idCurso);
+        return ResponseEntity.noContent().build();
     }
 
 
