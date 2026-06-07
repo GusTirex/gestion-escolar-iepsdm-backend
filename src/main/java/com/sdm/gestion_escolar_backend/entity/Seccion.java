@@ -1,4 +1,4 @@
-package com.sdm.gestion_escolar_backend.model;
+package com.sdm.gestion_escolar_backend.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,33 +15,20 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "notas")
+@Table(name = "secciones")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Nota {
+public class Seccion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id_nota;
+    private Integer idSeccion;
 
-    @Column(nullable = false)
-    private Integer id_evaluacion;
-
-    @Column(nullable = false)
-    private Integer id_estudiante;
-
-    @Column(nullable = false)
-    private Double nota;
-
-    @Column(length = 255)
-    private String observacion;
+    @Column(nullable = false, length = 100)
+    private String nombre;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_evaluacion")
-    private Evaluacion evaluacion;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_estudiante")
-    private Estudiante estudiante;
+    @JoinColumn(name = "id_grado")
+    private Grado grado;
 }

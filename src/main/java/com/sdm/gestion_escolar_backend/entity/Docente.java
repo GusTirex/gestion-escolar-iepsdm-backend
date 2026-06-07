@@ -1,4 +1,6 @@
-package com.sdm.gestion_escolar_backend.model;
+package com.sdm.gestion_escolar_backend.entity;
+
+import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,23 +17,35 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "grados")
+@Table(name = "docentes")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Grado {
+public class Docente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id_grado;
+    private Integer idDocente;
 
     @Column(nullable = false, length = 100)
-    private String nombre;
+    private String nombres;
+
+    @Column(nullable = false, length = 100)
+    private String apellidos;
 
     @Column(nullable = false)
-    private Integer id_nivel;
+    private LocalDate fechaNacimiento;
+
+    @Column(length = 255)
+    private String especialidad;
+
+    @Column(length = 255)
+    private String direccion;
+
+    @Column(length = 20)
+    private String telefono;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_nivel")
-    private Nivel nivel;
+    @JoinColumn(name = "id_usuario")
+    private Usuario usuario;
 }

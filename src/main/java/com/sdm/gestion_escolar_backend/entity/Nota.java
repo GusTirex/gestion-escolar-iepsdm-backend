@@ -1,4 +1,4 @@
-package com.sdm.gestion_escolar_backend.model;
+package com.sdm.gestion_escolar_backend.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,33 +15,27 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "usuarios")
+@Table(name = "notas")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Usuario {
+public class Nota {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id_usuario;
-
-    @Column(nullable = false, length = 50)
-    private String usuario;
-    
-    @Column(nullable = false, unique = true, length = 100)
-    private String email;
-
-    @Column(nullable = false, length = 255)
-    private String password;
-
-    @Builder.Default
-    @Column(nullable = false)
-    private Boolean estado = true;
+    private Integer idNota;
 
     @Column(nullable = false)
-    private Integer id_rol;
+    private Double nota;
+
+    @Column(length = 255)
+    private String observacion;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_rol")
-    private Rol rol;
+    @JoinColumn(name = "id_evaluacion")
+    private Evaluacion evaluacion;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_estudiante")
+    private Estudiante estudiante;
 }

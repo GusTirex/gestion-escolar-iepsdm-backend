@@ -8,14 +8,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.sdm.gestion_escolar_backend.model.Rol;
-import com.sdm.gestion_escolar_backend.model.Usuario;
+import com.sdm.gestion_escolar_backend.entity.Rol;
+import com.sdm.gestion_escolar_backend.entity.Usuario;
 
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     
     //Buscar por usuario
-    Usuario findByUsername(String username);
+    Usuario findByUsuario(String usuario);
 
     // Buscar por email
     Optional<Usuario> findByEmail(String email);
@@ -24,12 +24,12 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     List<Usuario> findByRol(Rol rol);
     
     // Buscar usuarios activos
-    List<Usuario> findByActivoTrue();
+    List<Usuario> findByEstadoTrue();
     
     // Verificar si existe email
     boolean existsByEmail(String email);
     
     // Buscar usuarios por rol y activos
-    @Query("SELECT u FROM Usuario u WHERE u.rol = :rol AND u.activo = true")
-    List<Usuario> findActiveUsersByRole(@Param("rol") Rol rol);
+    @Query("SELECT u FROM Usuario u WHERE u.rol = :rol AND u.estado = true")
+    List<Usuario> findByRolAndEstadoTrue(@Param("rol") Rol rol);
 }

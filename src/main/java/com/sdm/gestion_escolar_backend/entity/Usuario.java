@@ -1,6 +1,4 @@
-package com.sdm.gestion_escolar_backend.model;
-
-import java.time.LocalDate;
+package com.sdm.gestion_escolar_backend.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,29 +15,30 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "evaluaciones")
+@Table(name = "usuarios")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Evaluacion {
+public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id_evaluacion;
+    private Integer idUsuario;
 
+    @Column(nullable = false, length = 50)
+    private String usuario;
+    
+    @Column(nullable = false, unique = true, length = 100)
+    private String email;
+
+    @Column(nullable = false, length = 255)
+    private String password;
+
+    @Builder.Default
     @Column(nullable = false)
-    private String nombre;
-
-    @Column(nullable = false)
-    private Double porcentaje;
-
-    @Column(nullable = false, columnDefinition = "DATE")
-    private LocalDate fecha;
-
-    @Column(nullable = false)
-    private Integer id_curso;
+    private Boolean estado = true;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_curso")
-    private Curso curso;
+    @JoinColumn(name = "id_rol")
+    private Rol rol;
 }

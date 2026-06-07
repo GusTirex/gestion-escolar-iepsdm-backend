@@ -1,6 +1,5 @@
-package com.sdm.gestion_escolar_backend.model;
+package com.sdm.gestion_escolar_backend.entity;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -23,7 +22,7 @@ import lombok.NoArgsConstructor;
 public class DocenteCurso {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id_docente_curso;
+    private Integer idDocenteCurso;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_docente")
@@ -32,9 +31,6 @@ public class DocenteCurso {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_curso")
     private Curso curso;
-
-    @Column(nullable = false)
-    private Integer id_seccion;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_seccion")

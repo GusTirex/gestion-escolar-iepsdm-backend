@@ -1,7 +1,6 @@
-package com.sdm.gestion_escolar_backend.model;
+package com.sdm.gestion_escolar_backend.entity;
 
 import java.time.LocalDate;
-import java.time.Year;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,26 +17,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "matriculas")
+@Table(name = "asistencias")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Matricula {
+public class Asistencia {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id_matricula;
+    private Integer idAsistencia;
 
     @Column(nullable = false)
-    private Integer id_estudiante;
-
-    @Column(nullable = false)
-    private Integer id_seccion;
-
-    @Column(nullable = false)
-    private Year anio;
-    
-    @Column(nullable = false, columnDefinition = "DATE")
     private LocalDate fecha;
 
     @Builder.Default
@@ -47,8 +37,4 @@ public class Matricula {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_estudiante")
     private Estudiante estudiante;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_seccion")
-    private Seccion seccion;
 }

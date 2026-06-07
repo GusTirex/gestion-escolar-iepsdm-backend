@@ -1,4 +1,4 @@
-package com.sdm.gestion_escolar_backend.model;
+package com.sdm.gestion_escolar_backend.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,16 +12,20 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "roles")
+@Table(name = "cursos")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Rol {
+public class Curso {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id_rol;
+    @Column(name = "id_curso")
+    private Integer idCurso; // Cambiado de id_curso a idCurso para seguir la convención de Java
 
     @Column(nullable = false, length = 100)
-    private String rol;
+    private String nombre;
+
+    @Column(length = 255)
+    private String descripcion;
 }

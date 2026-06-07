@@ -1,4 +1,4 @@
-package com.sdm.gestion_escolar_backend.model;
+package com.sdm.gestion_escolar_backend.entity;
 
 import java.time.LocalDate;
 
@@ -17,15 +17,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "docentes")
+@Table(name = "padres")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Docente {
+public class Padre {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id_docente;
+    private Integer idPadre;
 
     @Column(nullable = false, length = 100)
     private String nombres;
@@ -33,20 +33,14 @@ public class Docente {
     @Column(nullable = false, length = 100)
     private String apellidos;
 
-    @Column(nullable = false, length = 255)
-    private LocalDate fecha_nacimiento;
-
-    @Column(length = 255)
-    private String especialidad;
+    @Column(nullable = false)
+    private LocalDate fechaNacimiento;
 
     @Column(length = 255)
     private String direccion;
 
     @Column(length = 20)
     private String telefono;
-
-    @Column(nullable = false)
-    private Integer id_usuario;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario")

@@ -1,4 +1,4 @@
-package com.sdm.gestion_escolar_backend.model;
+package com.sdm.gestion_escolar_backend.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 public class Nivel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id_nivel;
+    private Integer idNivel;
 
     @Column(nullable = false, length = 100)
     private String nombre;
