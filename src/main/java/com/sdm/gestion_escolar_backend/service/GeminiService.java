@@ -1,6 +1,7 @@
 package com.sdm.gestion_escolar_backend.service;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -59,18 +60,23 @@ public class GeminiService {
                 )
         );
 
-        Map response = restClient.post()
+        Map<String, Object> response = restClient.post()
                 .uri("/v1beta/models/" + model + ":generateContent?key=" + apiKey)
                 .body(body)
                 .retrieve()
-                .body(Map.class);
+                .body(new ParameterizedTypeReference<Map<String, Object>>() {});
 
+        return extraerTexto(response);
+    }
+
+    @SuppressWarnings("unchecked")
+    private String extraerTexto(Map<String, Object> response) {
         try {
-            List candidates = (List) response.get("candidates");
-            Map candidate = (Map) candidates.get(0);
-            Map content = (Map) candidate.get("content");
-            List parts = (List) content.get("parts");
-            Map part = (Map) parts.get(0);
+            List<Map<String, Object>> candidates = (List<Map<String, Object>>) response.get("candidates");
+            Map<String, Object> candidate = candidates.get(0);
+            Map<String, Object> content = (Map<String, Object>) candidate.get("content");
+            List<Map<String, Object>> parts = (List<Map<String, Object>>) content.get("parts");
+            Map<String, Object> part = parts.get(0);
 
             return part.get("text").toString();
 

@@ -36,7 +36,11 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest req) {
+        // Permite iniciar sesion con el nombre de usuario o con el correo.
         Usuario u = usuarioRepository.findByUsuario(req.getUsuario());
+        if (u == null) {
+            u = usuarioRepository.findByEmail(req.getUsuario()).orElse(null);
+        }
 
         if (u == null || !passwordCoincide(req.getPassword(), u.getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
