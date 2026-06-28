@@ -1,5 +1,6 @@
 package com.sdm.gestion_escolar_backend.service;
 
+import com.sdm.gestion_escolar_backend.dto.request.ChatRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -26,28 +27,44 @@ public class GeminiService {
                 .build();
     }
 
-    public String responder(String preguntaAlumno) {
+    public String responder(ChatRequest request) {
 
         if (apiKey == null || apiKey.isBlank()) {
             return "No se encontró la API Key de Gemini.";
         }
 
-        String contextoBD = chatDataService.obtenerContextoAcademico();
+        String contextoPermitido = chatDataService.obtenerContextoPermitido(request);
 
         String prompt = """
                 Eres un asistente académico de un campus virtual escolar.
 
-                Responde únicamente utilizando la información que proviene de la base de datos.
-                Si la información no existe, responde que no hay registros.
+                REGLAS DE PRIVACIDAD OBLIGATORIAS:
+                - Usa únicamente la información del CONTEXTO PERMITIDO.
+                - No inventes datos.
+                - No reveles información de alumnos, padres, docentes o usuarios que no aparezcan en el contexto permitido.
+                - Si el usuario pide información de otra persona que no aparece en el contexto permitido, responde:
+                  "No puedo darte esa información porque es privada."
+                - Si el usuario pregunta por sus notas, cursos, asistencia, tareas o evaluaciones, responde solo con la información disponible en el contexto permitido.
+                - Si el rol es ADMIN, puede consultar toda la información disponible.
+                - Responde en español, claro y breve.
 
-                Base de datos:
-
+                ROL DEL USUARIO:
                 %s
 
-                Pregunta:
-
+                ID DE ENTIDAD DEL USUARIO:
                 %s
-                """.formatted(contextoBD, preguntaAlumno);
+
+                CONTEXTO PERMITIDO:
+                %s
+
+                PREGUNTA DEL USUARIO:
+                %s
+                """.formatted(
+                request.getRol(),
+                request.getIdEntidad(),
+                contextoPermitido,
+                request.getMensaje()
+        );
 
         Map<String, Object> body = Map.of(
                 "contents", List.of(

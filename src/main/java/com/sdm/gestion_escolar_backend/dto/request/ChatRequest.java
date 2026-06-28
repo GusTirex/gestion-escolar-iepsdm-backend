@@ -2,16 +2,10 @@ package com.sdm.gestion_escolar_backend.dto.request;
 
 public class ChatRequest {
 
-    private Long alumnoId;
     private String mensaje;
-
-    public Long getAlumnoId() {
-        return alumnoId;
-    }
-
-    public void setAlumnoId(Long alumnoId) {
-        this.alumnoId = alumnoId;
-    }
+    private Long usuarioId;
+    private String rol;
+    private Long idEntidad;
 
     public String getMensaje() {
         return mensaje;
@@ -19,5 +13,29 @@ public class ChatRequest {
 
     public void setMensaje(String mensaje) {
         this.mensaje = mensaje;
+    }
+
+    public Long getUsuarioId() {
+        return usuarioId;
+    }
+
+    public void setUsuarioId(Long usuarioId) {
+        this.usuarioId = usuarioId;
+    }
+
+    public String getRol() {
+        return rol;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
+    }
+
+    public Long getIdEntidad() {
+        return idEntidad;
+    }
+
+    public void setIdEntidad(Long idEntidad) {
+        this.idEntidad = idEntidad;
     }
 }
