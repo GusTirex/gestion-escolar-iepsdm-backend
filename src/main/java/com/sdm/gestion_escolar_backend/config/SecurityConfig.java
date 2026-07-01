@@ -1,8 +1,8 @@
 package com.sdm.gestion_escolar_backend.config;
 
 import java.util.Arrays;
-import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,6 +18,12 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    // Origenes permitidos por CORS. En la nube se define con la variable
+    // de entorno CORS_ALLOWED_ORIGINS (separados por coma). Por defecto: local.
+    @Value("${cors.allowed-origins:http://localhost:5173}")
+    private String allowedOrigins;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -43,12 +49,8 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // Permitir orígenes locales y producción
-        // ESPECIFICA TUS URLs EXACTAS
-        configuration.setAllowedOrigins(List.of(
-                "http://localhost:5173"
-                // "https://gestion-escolar-frontend.onrender.com" // TU URL DE FRONTEND
-        ));
+        // Origenes permitidos (local por defecto; en la nube via CORS_ALLOWED_ORIGINS)
+        configuration.setAllowedOrigins(Arrays.asList(allowedOrigins.split(",")));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
