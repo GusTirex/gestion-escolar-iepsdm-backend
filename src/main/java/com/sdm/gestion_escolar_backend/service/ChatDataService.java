@@ -48,7 +48,7 @@ public class ChatDataService {
         contexto.append("CONTEXTO PERMITIDO PARA ADMINISTRADOR:\n");
         contexto.append("El administrador puede consultar toda la información del sistema.\n\n");
 
-        agregarTabla(contexto, "usuarios", "SELECT * FROM usuarios LIMIT 100");
+        // Privacidad: NO se envían la tabla usuarios ni contraseñas/correos al modelo de IA.
         agregarTabla(contexto, "estudiantes", "SELECT * FROM estudiantes LIMIT 100");
         agregarTabla(contexto, "padres", "SELECT * FROM padres LIMIT 100");
         agregarTabla(contexto, "docentes", "SELECT * FROM docentes LIMIT 100");
@@ -87,9 +87,6 @@ public class ChatDataService {
         ORDER BY est.apellidos, c.nombre, t.fecha_entrega
         """);
 
-        System.out.println("========== CONTEXTO ENVIADO A GEMINI ==========");
-System.out.println(contexto);
-System.out.println("===============================================");
         return contexto.toString();
     }
 
@@ -284,10 +281,6 @@ private String obtenerContextoEstudiante(Long idEstudiante) {
             ORDER BY ev.fecha ASC
             """);
 
-    System.out.println("========== CONTEXTO ESTUDIANTE ENVIADO A GEMINI ==========");
-    System.out.println(contexto);
-    System.out.println("==========================================================");
-
     return contexto.toString();
 }
     private String obtenerContextoDocente(Long idDocente) {
@@ -371,10 +364,6 @@ private String obtenerContextoEstudiante(Long idEstudiante) {
               AND nt.id_estudiante = est.id_estudiante
         WHERE dc.id_docente = """ + idDocente + " ORDER BY c.nombre, t.fecha_entrega, est.apellidos");
         
-        System.out.println("========== CONTEXTO PADRE/DOCENTE ==========");
-System.out.println(contexto);
-System.out.println("============================================");
-
         return contexto.toString();
     }
 
@@ -443,49 +432,25 @@ agregarTabla(contexto, "tareas_de_sus_hijos",
               AND nt.id_estudiante = est.id_estudiante
         WHERE ep.id_padre = """ + idPadre + " ORDER BY est.apellidos, t.fecha_entrega ASC");
 
-        System.out.println("========== CONTEXTO PADRE/DOCENTE ==========");
-        System.out.println(contexto);
-        System.out.println("============================================");
     return contexto.toString();
 }
 
 private void agregarTabla(StringBuilder contexto, String nombreTabla, String sql) {
     try {
-        System.out.println("========== CONSULTA CHAT IA ==========");
-        System.out.println("Tabla: " + nombreTabla);
-        System.out.println(sql);
-
         List<Map<String, Object>> datos = jdbcTemplate.queryForList(sql);
 
-        System.out.println("Registros encontrados: " + datos.size());
-        System.out.println(datos);
-        System.out.println("======================================");
-
         contexto.append("Tabla: ").append(nombreTabla).append("\n");
-
         if (datos.isEmpty()) {
             contexto.append("Sin registros.\n\n");
             return;
         }
-
         for (Map<String, Object> fila : datos) {
             contexto.append(fila).append("\n");
         }
-
         contexto.append("\n");
 
     } catch (Exception e) {
-        System.out.println("========== ERROR CONSULTA CHAT IA ==========");
-        System.out.println("Tabla: " + nombreTabla);
-        System.out.println(sql);
-        e.printStackTrace();
-        System.out.println("============================================");
-
-        contexto.append("No se pudo leer la tabla ")
-                .append(nombreTabla)
-                .append(": ")
-                .append(e.getMessage())
-                .append("\n\n");
+        contexto.append("No se pudo leer la tabla ").append(nombreTabla).append(".\n\n");
     }
   }
 }

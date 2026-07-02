@@ -2,6 +2,7 @@ package com.sdm.gestion_escolar_backend.service;
 
 import java.util.List;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,15 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    // Cifra la contraseña con BCrypt (si ya viene cifrada, la deja igual).
+    private String cifrar(String password) {
+        if (password != null && (password.startsWith("$2a$") || password.startsWith("$2b$") || password.startsWith("$2y$"))) {
+            return password;
+        }
+        return passwordEncoder.encode(password);
+    }
 
     @Override
     public List<Usuario> listar() {
@@ -49,6 +59,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         usuario.setUsuario(usuario.getUsuario().trim());
         usuario.setEmail(usuario.getEmail().trim());
+        usuario.setPassword(cifrar(usuario.getPassword()));
         usuario.setRol(obtenerRol(usuario.getRol().getIdRol()));
         return usuarioRepository.save(usuario);
     }
@@ -72,7 +83,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         existente.setUsuario(usuario.getUsuario().trim());
         existente.setEmail(usuario.getEmail().trim());
-        existente.setPassword(usuario.getPassword());
+        existente.setPassword(cifrar(usuario.getPassword()));
         existente.setEstado(usuario.getEstado());
         existente.setRol(obtenerRol(usuario.getRol().getIdRol()));
 

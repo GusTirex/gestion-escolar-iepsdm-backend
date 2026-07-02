@@ -24,3 +24,8 @@ dependency-reduced-pom.xml
 *.log
 logs/
 .fake
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
