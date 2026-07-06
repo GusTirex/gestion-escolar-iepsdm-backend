@@ -1,6 +1,8 @@
 package com.sdm.gestion_escolar_backend.controller;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import com.sdm.gestion_escolar_backend.dto.request.CrearPadreDTO;
 import com.sdm.gestion_escolar_backend.dto.response.PadreResponseDTO;
 import com.sdm.gestion_escolar_backend.entity.Padre;
 import com.sdm.gestion_escolar_backend.entity.Usuario;
+import com.sdm.gestion_escolar_backend.repository.EstudiantePadreRepository;
 import com.sdm.gestion_escolar_backend.service.PadreService;
 
 import io.swagger.v3.oas.annotations.Parameter;
@@ -31,6 +34,25 @@ import lombok.RequiredArgsConstructor;
 public class PadreController {
 
     private final PadreService padreService;
+    private final EstudiantePadreRepository estudiantePadreRepository;
+
+    // Hijos vinculados a un padre (relación estudiantes_padres).
+    @GetMapping("/{idPadre}/hijos")
+    public ResponseEntity<List<Map<String, Object>>> obtenerHijos(
+            @Parameter(description = "ID del padre") @PathVariable Integer idPadre) {
+        List<Map<String, Object>> hijos = estudiantePadreRepository.findByPadreIdPadre(idPadre).stream()
+                .filter(ep -> ep.getEstudiante() != null)
+                .map(ep -> {
+                    Map<String, Object> m = new LinkedHashMap<>();
+                    m.put("idEstudiante", ep.getEstudiante().getIdEstudiante());
+                    m.put("nombres", ep.getEstudiante().getNombres());
+                    m.put("apellidos", ep.getEstudiante().getApellidos());
+                    m.put("parentesco", ep.getParentesco());
+                    return m;
+                })
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(hijos);
+    }
 
     private PadreResponseDTO convertirADTO(Padre padre) {
         return PadreResponseDTO.builder()
