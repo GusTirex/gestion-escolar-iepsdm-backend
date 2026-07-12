@@ -31,6 +31,11 @@ public class NotaServiceImpl implements NotaService {
     }
 
     @Override
+    public List<Nota> listarPorEstudiante(Integer idEstudiante) {
+        return notaRepository.findByEstudianteIdEstudiante(idEstudiante);
+    }
+
+    @Override
     public Nota obtenerPorId(Integer idNota) {
         return notaRepository.findById(idNota)
                 .orElseThrow(() -> new ResourceNotFoundException("Nota no encontrada con id: " + idNota));

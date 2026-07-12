@@ -9,5 +9,6 @@ public interface NotaService {
     Nota actualizar(Integer idNota, Nota nota);
     void eliminar(Integer idNota);
     List<Nota> listar();
+    List<Nota> listarPorEstudiante(Integer idEstudiante);
     Nota obtenerPorId(Integer idNota);
 }

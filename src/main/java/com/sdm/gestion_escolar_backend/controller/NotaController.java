@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sdm.gestion_escolar_backend.dto.request.CrearNotaDTO;
@@ -44,8 +45,13 @@ public class NotaController {
     }
 
     @GetMapping
-    public ResponseEntity<List<NotaResponseDTO>> obtenerTodasLasNotas() {
-        List<NotaResponseDTO> notas = notaService.listar().stream()
+    public ResponseEntity<List<NotaResponseDTO>> obtenerTodasLasNotas(
+            @Parameter(description = "Filtra las notas de un estudiante (opcional)")
+            @RequestParam(required = false) Integer idEstudiante) {
+        List<Nota> base = (idEstudiante != null)
+                ? notaService.listarPorEstudiante(idEstudiante)
+                : notaService.listar();
+        List<NotaResponseDTO> notas = base.stream()
                 .map(this::convertirADTO)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(notas);

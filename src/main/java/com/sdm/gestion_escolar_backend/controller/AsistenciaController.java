@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sdm.gestion_escolar_backend.dto.request.CrearAsistenciaDTO;
@@ -42,8 +43,13 @@ public class AsistenciaController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AsistenciaResponseDTO>> obtenerTodasLasAsistencias() {
-        List<AsistenciaResponseDTO> asistencias = asistenciaService.listar().stream()
+    public ResponseEntity<List<AsistenciaResponseDTO>> obtenerTodasLasAsistencias(
+            @Parameter(description = "Filtra las asistencias de un estudiante (opcional)")
+            @RequestParam(required = false) Integer idEstudiante) {
+        List<Asistencia> base = (idEstudiante != null)
+                ? asistenciaService.listarPorEstudiante(idEstudiante)
+                : asistenciaService.listar();
+        List<AsistenciaResponseDTO> asistencias = base.stream()
                 .map(this::convertirADTO)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(asistencias);

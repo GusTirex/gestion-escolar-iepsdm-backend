@@ -9,5 +9,6 @@ public interface AsistenciaService {
     Asistencia actualizar(Integer idAsistencia, Asistencia asistencia);
     void eliminar(Integer idAsistencia);
     List<Asistencia> listar();
+    List<Asistencia> listarPorEstudiante(Integer idEstudiante);
     Asistencia obtenerPorId(Integer idAsistencia);
 }

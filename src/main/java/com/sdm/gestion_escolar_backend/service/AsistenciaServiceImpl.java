@@ -28,6 +28,11 @@ public class AsistenciaServiceImpl implements AsistenciaService {
     }
 
     @Override
+    public List<Asistencia> listarPorEstudiante(Integer idEstudiante) {
+        return asistenciaRepository.findByEstudianteIdEstudiante(idEstudiante);
+    }
+
+    @Override
     public Asistencia obtenerPorId(Integer idAsistencia) {
         return asistenciaRepository.findById(idAsistencia)
                 .orElseThrow(() -> new ResourceNotFoundException("Asistencia no encontrada con id: " + idAsistencia));
