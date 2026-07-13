@@ -21,6 +21,7 @@ import com.sdm.gestion_escolar_backend.entity.Estudiante;
 import com.sdm.gestion_escolar_backend.entity.Evaluacion;
 import com.sdm.gestion_escolar_backend.entity.Nota;
 import com.sdm.gestion_escolar_backend.service.NotaService;
+import com.sdm.gestion_escolar_backend.service.NotificacionService;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
@@ -33,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 public class NotaController {
 
     private final NotaService notaService;
+    private final NotificacionService notificacionService;
 
     private NotaResponseDTO convertirADTO(Nota nota) {
         return NotaResponseDTO.builder()
@@ -71,7 +73,15 @@ public class NotaController {
                 .evaluacion(Evaluacion.builder().idEvaluacion(dto.getIdEvaluacion()).build())
                 .estudiante(Estudiante.builder().idEstudiante(dto.getIdEstudiante()).build())
                 .build();
-        return ResponseEntity.status(201).body(convertirADTO(notaService.crear(nota)));
+        Nota guardada = notaService.crear(nota);
+        // Genera el aviso al estudiante y a sus padres. Si algo falla aqui,
+        // NO debe afectar el registro de la nota (ya esta guardada).
+        try {
+            notificacionService.notificarNotaRegistrada(dto.getIdEstudiante(), dto.getIdEvaluacion(), dto.getNota());
+        } catch (Exception ignorado) {
+            // Se ignora a proposito: la nota es lo importante.
+        }
+        return ResponseEntity.status(201).body(convertirADTO(guardada));
     }
 
     @PutMapping("/{idNota}")

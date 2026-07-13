@@ -16,6 +16,7 @@ import com.sdm.gestion_escolar_backend.dto.request.CrearEntregaDTO;
 import com.sdm.gestion_escolar_backend.dto.response.EntregaResponseDTO;
 import com.sdm.gestion_escolar_backend.entity.EntregaTrabajo;
 import com.sdm.gestion_escolar_backend.service.EntregaTrabajoService;
+import com.sdm.gestion_escolar_backend.service.NotificacionService;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
@@ -28,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 public class EntregaTrabajoController {
 
     private final EntregaTrabajoService entregaService;
+    private final NotificacionService notificacionService;
 
     private EntregaResponseDTO convertirADTO(EntregaTrabajo e) {
         var ev = e.getEvaluacion();
@@ -57,6 +59,13 @@ public class EntregaTrabajoController {
     public ResponseEntity<EntregaResponseDTO> registrar(@Valid @RequestBody CrearEntregaDTO dto) {
         EntregaTrabajo entrega = entregaService.registrar(
                 dto.getIdEstudiante(), dto.getIdEvaluacion(), dto.getComentario());
+        // Avisa a los padres y al docente del curso. Un fallo aqui no debe
+        // afectar la entrega, que ya quedo registrada.
+        try {
+            notificacionService.notificarTrabajoEntregado(dto.getIdEstudiante(), dto.getIdEvaluacion());
+        } catch (Exception ignorado) {
+            // Se ignora a proposito.
+        }
         return ResponseEntity.status(201).body(convertirADTO(entrega));
     }
 }
