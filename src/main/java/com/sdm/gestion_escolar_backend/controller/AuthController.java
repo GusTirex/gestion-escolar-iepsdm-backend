@@ -1,5 +1,6 @@
 package com.sdm.gestion_escolar_backend.controller;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import com.sdm.gestion_escolar_backend.repository.DocenteRepository;
 import com.sdm.gestion_escolar_backend.repository.EstudianteRepository;
 import com.sdm.gestion_escolar_backend.repository.PadreRepository;
 import com.sdm.gestion_escolar_backend.repository.UsuarioRepository;
+import com.sdm.gestion_escolar_backend.security.JwtService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,7 @@ public class AuthController {
     private final DocenteRepository docenteRepository;
     private final PadreRepository padreRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest req) {
@@ -82,6 +85,14 @@ public class AuthController {
             default -> { /* deja el nombre = usuario */ }
         }
 
+        // Datos que viajan dentro del token para identificar al usuario y su rol.
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("rol", rol);
+        claims.put("idUsuario", u.getIdUsuario());
+        claims.put("idEntidad", idEntidad);
+        claims.put("nombre", nombre);
+        String token = jwtService.generarToken(u.getUsuario(), claims);
+
         LoginResponse resp = LoginResponse.builder()
                 .idUsuario(u.getIdUsuario())
                 .usuario(u.getUsuario())
@@ -89,6 +100,7 @@ public class AuthController {
                 .rol(rol)
                 .nombre(nombre)
                 .idEntidad(idEntidad)
+                .token(token)
                 .build();
 
         return ResponseEntity.ok(resp);

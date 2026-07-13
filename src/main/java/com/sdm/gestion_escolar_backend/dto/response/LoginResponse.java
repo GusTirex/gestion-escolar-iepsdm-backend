@@ -16,4 +16,5 @@ public class LoginResponse {
     private String rol;       // ESTUDIANTE | DOCENTE | ADMIN | PADRE
     private String nombre;    // nombre completo de la persona
     private Integer idEntidad; // idEstudiante / idDocente / idPadre segun el rol
+    private String token;     // JWT que autentica las siguientes peticiones
 }
