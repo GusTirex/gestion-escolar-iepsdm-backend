@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +27,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
+@PreAuthorize("hasAnyRole('DOCENTE','ADMIN')")
 @RequestMapping("/matriculas")
 @RequiredArgsConstructor
 @CrossOrigin
@@ -59,6 +61,7 @@ public class MatriculaController {
         return ResponseEntity.ok(convertirADTO(matriculaService.obtenerPorId(idMatricula)));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<MatriculaResponseDTO> crearMatricula(@Valid @RequestBody CrearMatriculaDTO dto) {
         Matricula matricula = Matricula.builder()
@@ -71,6 +74,7 @@ public class MatriculaController {
         return ResponseEntity.status(201).body(convertirADTO(matriculaService.crear(matricula)));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{idMatricula}")
     public ResponseEntity<MatriculaResponseDTO> actualizarMatricula(
             @Parameter(description = "ID de la matricula a actualizar", required = true)
@@ -86,6 +90,7 @@ public class MatriculaController {
         return ResponseEntity.ok(convertirADTO(matriculaService.actualizar(idMatricula, matricula)));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{idMatricula}")
     public ResponseEntity<Void> eliminarMatricula(
             @Parameter(description = "ID de la matricula a eliminar", required = true)

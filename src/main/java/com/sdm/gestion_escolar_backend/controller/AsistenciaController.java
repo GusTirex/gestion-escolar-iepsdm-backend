@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,7 @@ import com.sdm.gestion_escolar_backend.dto.request.CrearAsistenciaDTO;
 import com.sdm.gestion_escolar_backend.dto.response.AsistenciaResponseDTO;
 import com.sdm.gestion_escolar_backend.entity.Asistencia;
 import com.sdm.gestion_escolar_backend.entity.Estudiante;
+import com.sdm.gestion_escolar_backend.security.AccesoService;
 import com.sdm.gestion_escolar_backend.service.AsistenciaService;
 
 import io.swagger.v3.oas.annotations.Parameter;
@@ -32,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 public class AsistenciaController {
 
     private final AsistenciaService asistenciaService;
+    private final AccesoService acceso;
 
     private AsistenciaResponseDTO convertirADTO(Asistencia asistencia) {
         return AsistenciaResponseDTO.builder()
@@ -46,8 +49,10 @@ public class AsistenciaController {
     public ResponseEntity<List<AsistenciaResponseDTO>> obtenerTodasLasAsistencias(
             @Parameter(description = "Filtra las asistencias de un estudiante (opcional)")
             @RequestParam(required = false) Integer idEstudiante) {
-        List<Asistencia> base = (idEstudiante != null)
-                ? asistenciaService.listarPorEstudiante(idEstudiante)
+        // El id se valida contra el token (ver NotaController).
+        Integer permitido = acceso.estudiantePermitido(idEstudiante);
+        List<Asistencia> base = (permitido != null)
+                ? asistenciaService.listarPorEstudiante(permitido)
                 : asistenciaService.listar();
         List<AsistenciaResponseDTO> asistencias = base.stream()
                 .map(this::convertirADTO)
@@ -61,6 +66,7 @@ public class AsistenciaController {
         return ResponseEntity.ok(convertirADTO(asistenciaService.obtenerPorId(idAsistencia)));
     }
 
+    @PreAuthorize("hasAnyRole('DOCENTE','ADMIN')")
     @PostMapping
     public ResponseEntity<AsistenciaResponseDTO> crearAsistencia(@Valid @RequestBody CrearAsistenciaDTO dto) {
         Asistencia asistencia = Asistencia.builder()
@@ -71,6 +77,7 @@ public class AsistenciaController {
         return ResponseEntity.status(201).body(convertirADTO(asistenciaService.crear(asistencia)));
     }
 
+    @PreAuthorize("hasAnyRole('DOCENTE','ADMIN')")
     @PutMapping("/{idAsistencia}")
     public ResponseEntity<AsistenciaResponseDTO> actualizarAsistencia(
             @Parameter(description = "ID de la asistencia a actualizar", required = true)
@@ -84,6 +91,7 @@ public class AsistenciaController {
         return ResponseEntity.ok(convertirADTO(asistenciaService.actualizar(idAsistencia, asistencia)));
     }
 
+    @PreAuthorize("hasAnyRole('DOCENTE','ADMIN')")
     @DeleteMapping("/{idAsistencia}")
     public ResponseEntity<Void> eliminarAsistencia(
             @Parameter(description = "ID de la asistencia a eliminar", required = true)

@@ -9,6 +9,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -38,4 +44,16 @@ public class Nota {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_estudiante")
     private Estudiante estudiante;
+
+    // --- Auditoria: permite saber quien puso o cambio la nota y cuando ---
+    @CreationTimestamp
+    @Column(name = "creado_en", updatable = false)
+    private LocalDateTime creadoEn;
+
+    @UpdateTimestamp
+    @Column(name = "actualizado_en")
+    private LocalDateTime actualizadoEn;
+
+    @Column(name = "registrado_por", length = 50)
+    private String registradoPor;
 }

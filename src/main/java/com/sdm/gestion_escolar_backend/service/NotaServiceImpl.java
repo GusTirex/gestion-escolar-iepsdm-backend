@@ -60,6 +60,9 @@ public class NotaServiceImpl implements NotaService {
         existente.setObservacion(nota.getObservacion());
         existente.setEvaluacion(obtenerEvaluacion(nota.getEvaluacion().getIdEvaluacion()));
         existente.setEstudiante(obtenerEstudiante(nota.getEstudiante().getIdEstudiante()));
+        if (nota.getRegistradoPor() != null) {
+            existente.setRegistradoPor(nota.getRegistradoPor()); // auditoria: ultimo que la modifico
+        }
 
         return notaRepository.save(existente);
     }

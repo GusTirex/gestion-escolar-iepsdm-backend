@@ -4,7 +4,10 @@ import com.sdm.gestion_escolar_backend.dto.request.ChatRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestClientResponseException;
 
 import java.util.List;
 import java.util.Map;
@@ -110,13 +113,25 @@ public class GeminiService {
                 )
         );
 
-        Map<String, Object> response = restClient.post()
-                .uri("/v1beta/models/" + model + ":generateContent?key=" + apiKey)
-                .body(body)
-                .retrieve()
-                .body(new ParameterizedTypeReference<Map<String, Object>>() {});
+        try {
+            Map<String, Object> response = restClient.post()
+                    .uri("/v1beta/models/" + model + ":generateContent?key=" + apiKey)
+                    .body(body)
+                    .retrieve()
+                    .body(new ParameterizedTypeReference<Map<String, Object>>() {});
 
-        return extraerTexto(response);
+            return extraerTexto(response);
+
+        } catch (HttpClientErrorException.TooManyRequests e) {
+            return "El asistente esta recibiendo muchas consultas en este momento. "
+                    + "Espera unos segundos y vuelve a preguntar.";
+        } catch (RestClientResponseException e) {
+            // Error devuelto por la API de Gemini (clave invalida, cuota, etc.)
+            return "No pude consultar al asistente en este momento. Intenta de nuevo en unos minutos.";
+        } catch (RestClientException e) {
+            // Problema de red o tiempo de espera agotado.
+            return "No hay conexion con el asistente en este momento. Intenta de nuevo en unos minutos.";
+        }
     }
 
     @SuppressWarnings("unchecked")

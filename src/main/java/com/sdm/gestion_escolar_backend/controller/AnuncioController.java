@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,6 +57,7 @@ public class AnuncioController {
         return ResponseEntity.ok(convertirADTO(anuncioService.obtenerPorId(idAnuncio)));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<AnuncioResponseDTO> crearAnuncio(@Valid @RequestBody CrearAnuncioDTO dto) {
         Anuncio anuncio = Anuncio.builder()
@@ -67,6 +69,7 @@ public class AnuncioController {
         return ResponseEntity.status(201).body(convertirADTO(anuncioService.crear(anuncio)));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{idAnuncio}")
     public ResponseEntity<AnuncioResponseDTO> actualizarAnuncio(
             @Parameter(description = "ID del anuncio a actualizar", required = true) @PathVariable Integer idAnuncio,
@@ -80,6 +83,7 @@ public class AnuncioController {
         return ResponseEntity.ok(convertirADTO(anuncioService.actualizar(idAnuncio, anuncio)));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{idAnuncio}")
     public ResponseEntity<Void> eliminarAnuncio(
             @Parameter(description = "ID del anuncio a eliminar", required = true) @PathVariable Integer idAnuncio) {

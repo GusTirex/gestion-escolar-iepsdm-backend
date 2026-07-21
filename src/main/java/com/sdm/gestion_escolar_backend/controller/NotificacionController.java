@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sdm.gestion_escolar_backend.dto.response.NotificacionResponseDTO;
 import com.sdm.gestion_escolar_backend.entity.Notificacion;
+import com.sdm.gestion_escolar_backend.security.AccesoService;
 import com.sdm.gestion_escolar_backend.service.NotificacionService;
 
 import io.swagger.v3.oas.annotations.Parameter;
@@ -27,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 public class NotificacionController {
 
     private final NotificacionService notificacionService;
+    private final AccesoService acceso;
 
     private NotificacionResponseDTO convertirADTO(Notificacion n) {
         return NotificacionResponseDTO.builder()
@@ -38,31 +40,32 @@ public class NotificacionController {
                 .build();
     }
 
+    // Nadie puede leer las notificaciones de otro: el usuario sale del token
+    // y el parametro de la URL se ignora a proposito.
     @GetMapping
-    public ResponseEntity<List<NotificacionResponseDTO>> listar(
-            @Parameter(description = "ID del usuario", required = true)
-            @RequestParam Integer idUsuario) {
-        List<NotificacionResponseDTO> lista = notificacionService.listarDeUsuario(idUsuario).stream()
-                .map(this::convertirADTO)
-                .collect(Collectors.toList());
+    public ResponseEntity<List<NotificacionResponseDTO>> listar() {
+        List<NotificacionResponseDTO> lista =
+                notificacionService.listarDeUsuario(acceso.idUsuarioPropio()).stream()
+                        .map(this::convertirADTO)
+                        .collect(Collectors.toList());
         return ResponseEntity.ok(lista);
     }
 
     @GetMapping("/no-leidas")
-    public ResponseEntity<Map<String, Long>> contarNoLeidas(
-            @RequestParam Integer idUsuario) {
-        return ResponseEntity.ok(Map.of("noLeidas", notificacionService.contarNoLeidas(idUsuario)));
+    public ResponseEntity<Map<String, Long>> contarNoLeidas() {
+        return ResponseEntity.ok(
+                Map.of("noLeidas", notificacionService.contarNoLeidas(acceso.idUsuarioPropio())));
     }
 
     @PutMapping("/{idNotificacion}/leida")
     public ResponseEntity<Void> marcarLeida(@PathVariable Integer idNotificacion) {
-        notificacionService.marcarLeida(idNotificacion);
+        notificacionService.marcarLeidaDeUsuario(idNotificacion, acceso.idUsuarioPropio());
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/leer-todas")
-    public ResponseEntity<Void> marcarTodasLeidas(@RequestParam Integer idUsuario) {
-        notificacionService.marcarTodasLeidas(idUsuario);
+    public ResponseEntity<Void> marcarTodasLeidas() {
+        notificacionService.marcarTodasLeidas(acceso.idUsuarioPropio());
         return ResponseEntity.noContent().build();
     }
 }

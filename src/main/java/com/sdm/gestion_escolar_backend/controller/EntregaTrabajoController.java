@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sdm.gestion_escolar_backend.dto.request.CrearEntregaDTO;
 import com.sdm.gestion_escolar_backend.dto.response.EntregaResponseDTO;
 import com.sdm.gestion_escolar_backend.entity.EntregaTrabajo;
+import com.sdm.gestion_escolar_backend.security.AccesoService;
 import com.sdm.gestion_escolar_backend.service.EntregaTrabajoService;
 import com.sdm.gestion_escolar_backend.service.NotificacionService;
 
@@ -29,6 +31,7 @@ import lombok.RequiredArgsConstructor;
 public class EntregaTrabajoController {
 
     private final EntregaTrabajoService entregaService;
+    private final AccesoService acceso;
     private final NotificacionService notificacionService;
 
     private EntregaResponseDTO convertirADTO(EntregaTrabajo e) {
@@ -49,7 +52,9 @@ public class EntregaTrabajoController {
     public ResponseEntity<List<EntregaResponseDTO>> listar(
             @Parameter(description = "ID del estudiante", required = true)
             @RequestParam Integer idEstudiante) {
-        List<EntregaResponseDTO> entregas = entregaService.listarPorEstudiante(idEstudiante).stream()
+        // El id se valida contra el token (un alumno solo ve sus entregas).
+        Integer permitido = acceso.estudiantePermitido(idEstudiante);
+        List<EntregaResponseDTO> entregas = entregaService.listarPorEstudiante(permitido).stream()
                 .map(this::convertirADTO)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(entregas);
@@ -57,12 +62,14 @@ public class EntregaTrabajoController {
 
     @PostMapping
     public ResponseEntity<EntregaResponseDTO> registrar(@Valid @RequestBody CrearEntregaDTO dto) {
+        // Nadie puede entregar un trabajo a nombre de otro estudiante.
+        Integer idEstudiante = acceso.estudiantePermitido(dto.getIdEstudiante());
         EntregaTrabajo entrega = entregaService.registrar(
-                dto.getIdEstudiante(), dto.getIdEvaluacion(), dto.getComentario());
+                idEstudiante, dto.getIdEvaluacion(), dto.getComentario());
         // Avisa a los padres y al docente del curso. Un fallo aqui no debe
         // afectar la entrega, que ya quedo registrada.
         try {
-            notificacionService.notificarTrabajoEntregado(dto.getIdEstudiante(), dto.getIdEvaluacion());
+            notificacionService.notificarTrabajoEntregado(idEstudiante, dto.getIdEvaluacion());
         } catch (Exception ignorado) {
             // Se ignora a proposito.
         }

@@ -90,6 +90,48 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
     }
 
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ApiErrorResponse> handleForbidden(
+            ForbiddenException ex,
+            HttpServletRequest request) {
+
+        ApiErrorResponse body = buildError(
+                HttpStatus.FORBIDDEN,
+                ex.getMessage(),
+                request.getRequestURI(),
+                null);
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(body);
+    }
+
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<ApiErrorResponse> handleAccessDenied(
+            org.springframework.security.access.AccessDeniedException ex,
+            HttpServletRequest request) {
+
+        ApiErrorResponse body = buildError(
+                HttpStatus.FORBIDDEN,
+                "No tienes permiso para realizar esta accion.",
+                request.getRequestURI(),
+                null);
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(body);
+    }
+
+    @ExceptionHandler(TooManyRequestsException.class)
+    public ResponseEntity<ApiErrorResponse> handleTooManyRequests(
+            TooManyRequestsException ex,
+            HttpServletRequest request) {
+
+        ApiErrorResponse body = buildError(
+                HttpStatus.TOO_MANY_REQUESTS,
+                ex.getMessage(),
+                request.getRequestURI(),
+                null);
+
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(body);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleUnexpected(
             Exception ex,

@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +21,8 @@ import com.sdm.gestion_escolar_backend.dto.request.CrearPadreDTO;
 import com.sdm.gestion_escolar_backend.dto.response.PadreResponseDTO;
 import com.sdm.gestion_escolar_backend.entity.Padre;
 import com.sdm.gestion_escolar_backend.entity.Usuario;
+import com.sdm.gestion_escolar_backend.exception.ForbiddenException;
+import com.sdm.gestion_escolar_backend.security.AccesoService;
 import com.sdm.gestion_escolar_backend.repository.EstudiantePadreRepository;
 import com.sdm.gestion_escolar_backend.service.PadreService;
 
@@ -35,11 +38,20 @@ public class PadreController {
 
     private final PadreService padreService;
     private final EstudiantePadreRepository estudiantePadreRepository;
+    private final AccesoService acceso;
 
     // Hijos vinculados a un padre (relación estudiantes_padres).
     @GetMapping("/{idPadre}/hijos")
     public ResponseEntity<List<Map<String, Object>>> obtenerHijos(
             @Parameter(description = "ID del padre") @PathVariable Integer idPadre) {
+        // Un padre solo puede pedir SUS hijos; docentes y admin pueden consultar.
+        var u = acceso.actual();
+        if (u.esPadre() && !u.idEntidad().equals(idPadre)) {
+            throw new ForbiddenException("Solo puedes consultar a tus propios hijos.");
+        }
+        if (u.esEstudiante()) {
+            throw new ForbiddenException("No tienes permiso para consultar esta informacion.");
+        }
         List<Map<String, Object>> hijos = estudiantePadreRepository.findByPadreIdPadre(idPadre).stream()
                 .filter(ep -> ep.getEstudiante() != null)
                 .map(ep -> {
@@ -66,6 +78,7 @@ public class PadreController {
                 .build();
     }
 
+    @PreAuthorize("hasAnyRole('DOCENTE','ADMIN')")
     @GetMapping
     public ResponseEntity<List<PadreResponseDTO>> obtenerTodosLosPadres() {
         List<PadreResponseDTO> padres = padreService.listar().stream()
@@ -74,12 +87,14 @@ public class PadreController {
         return ResponseEntity.ok(padres);
     }
 
+    @PreAuthorize("hasAnyRole('DOCENTE','ADMIN')")
     @GetMapping("/{idPadre}")
     public ResponseEntity<PadreResponseDTO> obtenerPadrePorId(
             @Parameter(description = "ID del padre a buscar", required = true) @PathVariable Integer idPadre) {
         return ResponseEntity.ok(convertirADTO(padreService.obtenerPorId(idPadre)));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<PadreResponseDTO> crearPadre(@Valid @RequestBody CrearPadreDTO dto) {
         Padre padre = Padre.builder()
@@ -93,6 +108,7 @@ public class PadreController {
         return ResponseEntity.status(201).body(convertirADTO(padreService.crear(padre)));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{idPadre}")
     public ResponseEntity<PadreResponseDTO> actualizarPadre(
             @Parameter(description = "ID del padre a actualizar", required = true) @PathVariable Integer idPadre,
@@ -108,6 +124,7 @@ public class PadreController {
         return ResponseEntity.ok(convertirADTO(padreService.actualizar(idPadre, padre)));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{idPadre}")
     public ResponseEntity<Void> eliminarPadre(
             @Parameter(description = "ID del padre a eliminar", required = true) @PathVariable Integer idPadre) {

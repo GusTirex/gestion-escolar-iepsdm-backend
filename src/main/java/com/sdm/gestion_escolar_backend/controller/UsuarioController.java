@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +26,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
+@PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/usuarios")
 @RequiredArgsConstructor
 @CrossOrigin
@@ -56,6 +58,7 @@ public class UsuarioController {
         return ResponseEntity.ok(convertirADTO(usuarioService.obtenerPorId(idUsuario)));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<UsuarioResponseDTO> crearUsuario(@Valid @RequestBody CrearUsuarioDTO dto) {
         Usuario usuario = Usuario.builder()
@@ -68,6 +71,7 @@ public class UsuarioController {
         return ResponseEntity.status(201).body(convertirADTO(usuarioService.crear(usuario)));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{idUsuario}")
     public ResponseEntity<UsuarioResponseDTO> actualizarUsuario(
             @Parameter(description = "ID del usuario a actualizar", required = true)
@@ -83,6 +87,7 @@ public class UsuarioController {
         return ResponseEntity.ok(convertirADTO(usuarioService.actualizar(idUsuario, usuario)));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{idUsuario}")
     public ResponseEntity<Void> eliminarUsuario(
             @Parameter(description = "ID del usuario a eliminar", required = true) @PathVariable Integer idUsuario) {

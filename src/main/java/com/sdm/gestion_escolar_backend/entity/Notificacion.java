@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +19,10 @@ import lombok.NoArgsConstructor;
  * Se genera automaticamente al calificar o al entregar un trabajo.
  */
 @Entity
-@Table(name = "notificaciones")
+// Se consulta siempre por usuario (la campana refresca cada 40 s),
+// por eso el indice sobre id_usuario.
+@Table(name = "notificaciones",
+        indexes = @Index(name = "idx_notificaciones_usuario", columnList = "id_usuario"))
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,6 +58,7 @@ public class EvaluacionController {
         return ResponseEntity.ok(convertirADTO(evaluacionService.obtenerPorId(idEvaluacion)));
     }
 
+    @PreAuthorize("hasAnyRole('DOCENTE','ADMIN')")
     @PostMapping
     public ResponseEntity<EvaluacionResponseDTO> crearEvaluacion(@Valid @RequestBody CrearEvaluacionDTO dto) {
         Evaluacion evaluacion = Evaluacion.builder()
@@ -68,6 +70,7 @@ public class EvaluacionController {
         return ResponseEntity.status(201).body(convertirADTO(evaluacionService.crear(evaluacion)));
     }
 
+    @PreAuthorize("hasAnyRole('DOCENTE','ADMIN')")
     @PutMapping("/{idEvaluacion}")
     public ResponseEntity<EvaluacionResponseDTO> actualizarEvaluacion(
             @Parameter(description = "ID de la evaluacion a actualizar", required = true)
@@ -82,6 +85,7 @@ public class EvaluacionController {
         return ResponseEntity.ok(convertirADTO(evaluacionService.actualizar(idEvaluacion, evaluacion)));
     }
 
+    @PreAuthorize("hasAnyRole('DOCENTE','ADMIN')")
     @DeleteMapping("/{idEvaluacion}")
     public ResponseEntity<Void> eliminarEvaluacion(
             @Parameter(description = "ID de la evaluacion a eliminar", required = true)

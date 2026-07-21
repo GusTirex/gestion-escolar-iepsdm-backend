@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +28,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
+@PreAuthorize("hasAnyRole('DOCENTE','ADMIN')")
 @RequestMapping("/docentes-cursos")
 @RequiredArgsConstructor
 @CrossOrigin
@@ -58,6 +60,7 @@ public class DocenteCursoController {
         return ResponseEntity.ok(convertirADTO(docenteCursoService.obtenerPorId(idDocenteCurso)));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<DocenteCursoResponseDTO> crearDocenteCurso(@Valid @RequestBody CrearDocenteCursoDTO dto) {
         DocenteCurso docenteCurso = DocenteCurso.builder()
@@ -68,6 +71,7 @@ public class DocenteCursoController {
         return ResponseEntity.status(201).body(convertirADTO(docenteCursoService.crear(docenteCurso)));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{idDocenteCurso}")
     public ResponseEntity<DocenteCursoResponseDTO> actualizarDocenteCurso(
             @Parameter(description = "ID del registro docente-curso a actualizar", required = true)
@@ -81,6 +85,7 @@ public class DocenteCursoController {
         return ResponseEntity.ok(convertirADTO(docenteCursoService.actualizar(idDocenteCurso, docenteCurso)));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{idDocenteCurso}")
     public ResponseEntity<Void> eliminarDocenteCurso(
             @Parameter(description = "ID del registro docente-curso a eliminar", required = true)

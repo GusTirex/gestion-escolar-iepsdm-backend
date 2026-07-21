@@ -53,6 +53,17 @@ public class NotificacionServiceImpl implements NotificacionService {
 
     @Override
     @Transactional
+    public void marcarLeidaDeUsuario(Integer idNotificacion, Integer idUsuario) {
+        notificacionRepository.findById(idNotificacion)
+                .filter(n -> n.getIdUsuario().equals(idUsuario)) // no toca las de otros
+                .ifPresent(n -> {
+                    n.setLeida(true);
+                    notificacionRepository.save(n);
+                });
+    }
+
+    @Override
+    @Transactional
     public void marcarTodasLeidas(Integer idUsuario) {
         List<Notificacion> lista = notificacionRepository.findTop30ByIdUsuarioOrderByFechaDesc(idUsuario);
         lista.forEach(n -> n.setLeida(true));

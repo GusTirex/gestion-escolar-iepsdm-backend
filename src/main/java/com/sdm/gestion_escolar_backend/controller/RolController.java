@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +25,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
+@PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/roles")
 @RequiredArgsConstructor
 @CrossOrigin
@@ -52,12 +54,14 @@ public class RolController {
         return ResponseEntity.ok(convertirADTO(rolService.obtenerPorId(idRol)));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<RolResponseDTO> crearRol(@Valid @RequestBody CrearRolDTO dto) {
         Rol rol = Rol.builder().rol(dto.getRol()).build();
         return ResponseEntity.status(201).body(convertirADTO(rolService.crear(rol)));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{idRol}")
     public ResponseEntity<RolResponseDTO> actualizarRol(
             @Parameter(description = "ID del rol a actualizar", required = true) @PathVariable Integer idRol,
@@ -66,6 +70,7 @@ public class RolController {
         return ResponseEntity.ok(convertirADTO(rolService.actualizar(idRol, rol)));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{idRol}")
     public ResponseEntity<Void> eliminarRol(
             @Parameter(description = "ID del rol a eliminar", required = true) @PathVariable Integer idRol) {
